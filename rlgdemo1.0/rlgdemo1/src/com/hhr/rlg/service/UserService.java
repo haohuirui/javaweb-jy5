@@ -9,6 +9,7 @@ import java.util.List;
 
 public class UserService {
     private UserDao ud = new UserDao();
+    ResponseCode rs = new ResponseCode();
     public ResponseCode selectAll(String pageSize, String pageNum) {
         if (pageSize == null || pageSize.equals("")){
             pageSize = "10";
@@ -16,8 +17,14 @@ public class UserService {
         if (pageNum == null || pageNum.equals("")){
             pageNum = "1";
         }
-        List<User> li = ud.selectAll(pageSize,pageNum);
-        ResponseCode rs = new ResponseCode();
+        Integer i = Integer.parseInt(pageNum);
+        Integer i1 = Integer.parseInt(pageSize);
+        List<User> li = ud.selectAll(i,i1);
+        if (li == null){
+            rs.setStatus(Const.COMMODITY_NO_LOGIN_CODE);
+            rs.setMsg(Const.COMMODITY_NO_LOGIN_MSG);
+            return rs;
+        }
         rs.setStatus(0);
         rs.setData(li);
         return rs;
@@ -47,7 +54,7 @@ public class UserService {
         rs.setData(u);
         return rs;
     }
-
+    //用户禁用
     public ResponseCode selectOne(String uid) {
         ResponseCode rs = new ResponseCode();
         if (uid == null || uid.equals("") ){
@@ -58,7 +65,6 @@ public class UserService {
         Integer ui = null;
         try {
             ui = Integer.parseInt(uid);
-            System.out.println(ui);
         }catch(Exception e){
             rs.setStatus(105);
             rs.setMsg("输入非法参数");
@@ -80,6 +86,44 @@ public class UserService {
         if (row<=0){
             rs.setStatus(106);
             rs.setMsg("用户禁用失败");
+            return rs;
+        }
+        rs.setStatus(0);
+        rs.setData(row);
+        return rs;
+    }
+    //用户解禁
+    public ResponseCode selectOne1(String uid) {
+        ResponseCode rs = new ResponseCode();
+        if (uid == null || uid.equals("") ){
+            rs.setStatus(Const.USER_PARAMETER_CODE);//101
+            rs.setMsg(Const.USER_PARAMETER_MSG);//参数为空
+            return rs;
+        }
+        Integer ui = null;
+        try {
+            ui = Integer.parseInt(uid);
+        }catch(Exception e){
+            rs.setStatus(105);
+            rs.setMsg("输入非法参数");
+        }
+        User u = ud.selectOne(ui);
+        //如果用户不存在
+        if (u == null){
+            rs.setStatus(Const.USER_NO_CODE);//103
+            rs.setMsg(Const.USER_NO_MSG);//用户不存在
+            return rs;
+        }
+        //用户禁用情况
+        if (u.getStats() == 0){
+            /*rs.setStatus(Const.USER_DISABLE_CODE);//105
+            rs.setMsg(Const.USER_DISABLE_MSG);//用户已被禁用
+            return rs;*/
+        }
+        int row = ud.updateByUid1(ui);
+        if (row<=0){
+            rs.setStatus(106);
+            rs.setMsg("用户解禁失败");
             return rs;
         }
         rs.setStatus(0);

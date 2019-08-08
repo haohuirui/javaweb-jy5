@@ -1,7 +1,6 @@
 package com.hhr.rlg.controller;
 
 import com.hhr.rlg.common.ResponseCode;
-import com.hhr.rlg.pojo.User;
 import com.hhr.rlg.service.UserService;
 import com.hhr.rlg.utils.PathUtil;
 
@@ -12,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet("/manage/user/*")
 public class UserController extends HttpServlet {
@@ -29,37 +27,47 @@ public class UserController extends HttpServlet {
         ResponseCode rs = null;
         switch (p){
             case "list":
-                rs = listDo(request);
+                listDo(request,response);
                 break;
             case "login":
-                rs = loginDo(request);
+                loginDo(request,response);
                 break;
             case "prohibit":
-                rs = prohibitDo(request);
+                prohibitDo(request,response);
+                break;
+            case "unProhibit":
+                unProhibitDo(request,response);
                 break;
         }
         //返回响应数据
-        response.getWriter().write(rs.toString());
+        //response.getWriter().write(rs.toString());
     }
     //获取所有用户列表的请求
-    private ResponseCode listDo(HttpServletRequest request){
-        ResponseCode rs = new ResponseCode();
-        HttpSession session = request.getSession();
+    private void listDo(HttpServletRequest request,HttpServletResponse response){
+        //ResponseCode rs = new ResponseCode();
+
+        /*HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         if (user == null){
             rs.setStatus(3);
             rs.setMsg("请登录后在操作");
-            return rs;
-        }
+        }*/
         //获取参数
         String pageSize = request.getParameter("pageSize");
         String pageNum = request.getParameter("pageNum");
         //调用业务层处理业务
-        rs = us.selectAll(pageSize,pageNum);
-        return rs;
+        ResponseCode rs = us.selectAll(pageSize,pageNum);
+        request.setAttribute("uli",rs);
+        try {
+            request.getRequestDispatcher("/WEB-INF/listhome.jsp").forward(request,response);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     //用户登录的请求
-    private ResponseCode loginDo(HttpServletRequest request){
+    private void loginDo(HttpServletRequest request,HttpServletResponse response)  {
         //获取参数
         String username = request.getParameter("username");
         String password = request.getParameter("password");
@@ -68,15 +76,46 @@ public class UserController extends HttpServlet {
         //获取session对象
         HttpSession session = request.getSession();
         session.setAttribute("user",rs.getData());
-        return rs;
+//        return rs;
+
+        try {
+                       //response.sendRedirect("/home.jsp");
+            request.getRequestDispatcher("/WEB-INF/home.jsp").forward(request,response);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
-    //用户禁用
-    private ResponseCode prohibitDo(HttpServletRequest request){
+    //用户禁用*
+    private void prohibitDo(HttpServletRequest request,HttpServletResponse response){
         //获取参数
         String uid = request.getParameter("uid");
         //调用业务层处理业务
         ResponseCode rs = us.selectOne(uid);
-        return rs;
+        try {
+            request.getRequestDispatcher("/manage/user/list.do").forward(request,response);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+    //用户解禁*
+    private void  unProhibitDo(HttpServletRequest request,HttpServletResponse response){
+        //获取参数
+        String uid = request.getParameter("uid");
+        //调用业务层处理业务
+        ResponseCode rs = us.selectOne(uid);
+        try {
+            request.getRequestDispatcher("/manage/user/list.do").forward(request,response);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

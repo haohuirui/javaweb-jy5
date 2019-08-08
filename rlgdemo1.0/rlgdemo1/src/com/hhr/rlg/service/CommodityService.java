@@ -26,7 +26,7 @@ public class CommodityService {
         rs.setData(com);
         return rs;
     }
-
+    //增加节点
     public ResponseCode addOne(String parentId,String categoryName) {
         ResponseCode rs = new ResponseCode();
         /*if (parentId == null || parentId.equals("") || categoryName == null || categoryName.equals("")){
@@ -43,6 +43,7 @@ public class CommodityService {
         rs.setMsg("添加品类成功");
         return rs;
     }
+    //修改品类名称
     public ResponseCode updateOne(String categoryId,String categoryName) {
         ResponseCode rs = new ResponseCode();
         /*if (categoryId == null || categoryId.equals("") || categoryName == null || categoryName.equals("")){

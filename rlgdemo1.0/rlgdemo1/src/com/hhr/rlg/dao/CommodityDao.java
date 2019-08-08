@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class CommodityDao {
+
     public List<Commodity> selectAll(String parentid) {
         QueryRunner qr = new QueryRunner(RlgUtil.getCom());
         String sql = "select * from category where parentid = ?";
@@ -36,7 +37,7 @@ public class CommodityDao {
 
     public int updateOne(String categoryId, String categoryName) {
         QueryRunner qr = new QueryRunner(RlgUtil.getCom());
-        String sql = "update parent set pname = ? where parentid = ?";
+        String sql = "update parent set pname = ? where parentid = ? ";
         int i = 0;
         try {
             i = qr.update(sql,categoryName,categoryId);

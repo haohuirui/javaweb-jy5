@@ -3,19 +3,19 @@ package com.hhr.rlg.pojo;
  * 用户类
  * */
 public class User {
-    private Integer id;
+    private Integer uid;
     private String uname;
     private String psd;
     private String tel;
     private Integer type;
     private Integer stats;
 
-    public Integer getId() {
-        return id;
+    public Integer getUid() {
+        return uid;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setUid(Integer uid) {
+        this.uid = uid;
     }
 
     public String getUname() {
@@ -61,7 +61,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "uid=" + uid +
                 ", uname='" + uname + '\'' +
                 ", psd='" + psd + '\'' +
                 ", tel='" + tel + '\'' +
